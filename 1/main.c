@@ -60,9 +60,11 @@ int main(int argc, char *argv[]) {
                 printf("PID = %d, PPID = %d, PGID = %d\n", getpid(), getppid(), getpgrp());
                 break;
             case 'u': {
-                struct rlimit rl;
-                if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
-                    printf("ulimit = %ld\n", (long)rl.rlim_cur);
+                long max_proc = sysconf(_SC_CHILD_MAX);
+                if (max_proc != -1) {
+                    printf("ulimit = %ld\n", max_proc);
+                } else {
+                    perror("sysconf");
                 }
                 break;
             }
