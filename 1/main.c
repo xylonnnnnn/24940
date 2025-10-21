@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
                 break;
             case 'u': {
                 struct rlimit rl;
-                if (getrlimit(RLIMIT_NPROC, &rl) == 0) {
+                if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
                     printf("ulimit = %ld\n", (long)rl.rlim_cur);
                 }
                 break;
@@ -73,9 +73,9 @@ int main(int argc, char *argv[]) {
                     fprintf(stderr, "Неверное значение для -U: %s\n", opts[i].arg);
                 } else {
                     struct rlimit rl;
-                    if (getrlimit(RLIMIT_NPROC, &rl) == 0) {
+                    if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
                         rl.rlim_cur = val;
-                        if (setrlimit(RLIMIT_NPROC, &rl) == -1) {
+                        if (setrlimit(RLIMIT_NOFILE, &rl) == -1) {
                             perror("setrlimit");
                         } else {
                             printf("ulimit изменён на %ld\n", val);
