@@ -47,8 +47,7 @@ int main(int argc, char *argv[]) {
     for (int i = opt_count - 1; i >= 0; i--) {
         switch (opts[i].opt) {
             case 'i':
-                printf("UID(real=%d, effective=%d), GID(real=%d, effective=%d)\n",
-                       getuid(), geteuid(), getgid(), getegid());
+                printf("UID (real = %d, effective = %d), GID (real = %d, effective = %d)\n", getuid(), geteuid(), getgid(), getegid());
                 break;
             case 's':
                 if (setpgid(0, 0) == -1) {
@@ -58,8 +57,7 @@ int main(int argc, char *argv[]) {
                 }
                 break;
             case 'p':
-                printf("PID=%d, PPID=%d, PGID=%d\n",
-                       getpid(), getppid(), getpgrp());
+                printf("PID = %d, PPID = %d, PGID = %d\n", getpid(), getppid(), getpgrp());
                 break;
             case 'u': {
                 struct rlimit rl;

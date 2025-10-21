@@ -1,12 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -pedantic
-TARGET = string_list
-SOURCES = main.c
+CFLAGS = -Wall -Wextra -O2
+TARGET = operating_systems
+SRC = main.c
+OBJ = $(SRC:.c=.o)
 
-$(TARGET): $(SOURCES)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SOURCES)
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET)
-
-.PHONY: clean
+	rm -f $(OBJ) $(TARGET)
