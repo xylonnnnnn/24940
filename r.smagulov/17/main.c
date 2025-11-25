@@ -26,9 +26,27 @@ void enableRawMode() {
 void refresh_line(char *buffer, int len) {
     printf("\r\033[K"); 
     
-    for (int i = 0; i < len; i++) {
-        putchar(buffer[i]);
-        if ((i + 1) % 40 == 0 && i != len - 1) {
+    int line_start = 0;
+    while (line_start < len) {
+        int line_end = line_start + 40;
+        
+        if (line_end < len && !isspace(buffer[line_end - 1]) && !isspace(buffer[line_end])) {
+            int word_start = line_end;
+            while (word_start > line_start && !isspace(buffer[word_start - 1])) {
+                word_start--;
+            }
+            
+            if (word_start > line_start) {
+                line_end = word_start;
+            }
+        }
+        
+        for (int i = line_start; i < line_end && i < len; i++) {
+            putchar(buffer[i]);
+        }
+        
+        line_start = line_end;
+        if (line_start < len) {
             printf("\n");
         }
     }
