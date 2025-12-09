@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
         printf(" %s %s", pw ? pw->pw_name : "?", gr ? gr->gr_name : "?");
 
         if (S_ISREG(st.st_mode)) {
-            printf(" %lld", st.st_size);
+            printf(" %ld", st.st_size);
         } else {
             printf(" ");
         }

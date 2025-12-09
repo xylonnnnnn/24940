@@ -16,16 +16,72 @@ void enableRawMode() {
     atexit(disableRawMode);
     struct termios raw = orig_termios;
     raw.c_lflag &= ~(ICANON | ECHO);
+    
+    raw.c_cc[VMIN] = 1; 
+    raw.c_cc[VTIME] = 0;  
+    
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
 void refresh_line(char *buffer, int len) {
-    printf("\r\033[K"); 
+    printf("\r\033[K");
     
-    for (int i = 0; i < len; i++) {
-        putchar(buffer[i]);
-        if ((i + 1) % 40 == 0 && i != len - 1) {
+    int line_start = 0;
+    int current_line = 0;
+    
+    while (line_start < len) {
+        int line_end = line_start + 40;
+        if (line_end < len && !isspace(buffer[line_end - 1]) && !isspace(buffer[line_end])) {
+            int word_start = line_end;
+            while (word_start > line_start && !isspace(buffer[word_start - 1])) {
+                word_start--;
+            }
+            if (word_start > line_start) {
+                line_end = word_start;
+            }
+        }
+
+        for (int i = line_start; i < line_end && i < len; i++) {
+            putchar(buffer[i]);
+        }
+        
+        line_start = line_end;
+        if (line_start < len) {
             printf("\n");
+            current_line++;
+        }
+    }
+    if (len > 0) {
+        int total_lines = 0;
+        int pos = 0;
+        
+        line_start = 0;
+        while (line_start < len) {
+            int line_end = line_start + 40;
+            if (line_end < len && !isspace(buffer[line_end - 1]) && !isspace(buffer[line_end])) {
+                int word_start = line_end;
+                while (word_start > line_start && !isspace(buffer[word_start - 1])) {
+                    word_start--;
+                }
+                if (word_start > line_start) {
+                    line_end = word_start;
+                }
+            }
+            
+            if (line_start <= len && len <= line_end) {
+                pos = len - line_start;
+                break;
+            }
+            line_start = line_end;
+            total_lines++;
+        }
+        
+        if (total_lines > 0) {
+            printf("\033[%dA", total_lines);
+        }
+        printf("\r");
+        if (pos > 0) {
+            printf("\033[%dC", pos);
         }
     }
     fflush(stdout);
